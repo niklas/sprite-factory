@@ -10,6 +10,10 @@ module SpriteFactory
       def self.load_file(filename)
         raise NotImplementedError, "please implement #{self}.load_file(filename)"
       end
+
+      def self.create(filename, images, width, height)
+        raise NotImplementedError, "please implement #{self}.create(filename, images, width, height)"
+      end
     end # class Base
   end # module Library
 end # module SpriteFactory
