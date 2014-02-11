@@ -1,7 +1,11 @@
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
-guard 'rake', :task => 'test' do
-  watch(%r{^lib/.*\.rb$})
-  watch(%r{^test/.*\.rb$})
+guard 'rspec', bundler: true do
+  watch(%r{^spec/.+_spec\.rb$})
+  watch(%r{^lib/(.+)\.rb$})     { |m| "spec/#{m[1]}_spec.rb" }
+  watch('spec/spec_helper.rb')  { "spec" }
+
+  watch(%r{^spec/support/(.+)\.rb$})                  { "spec" }
 end
+

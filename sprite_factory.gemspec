@@ -16,6 +16,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rmagick'
   s.add_development_dependency 'chunky_png'
   s.add_development_dependency 'mini_magick'
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'guard'
+  s.add_development_dependency 'guard-rspec', '~> 4.2.6'
 
   s.has_rdoc         = false
   s.extra_rdoc_files = ["README.md"]
