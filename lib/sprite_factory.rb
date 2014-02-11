@@ -55,8 +55,10 @@ module SpriteFactory
 
   module Library # abstract module for using various image libraries
 
-    autoload :RMagick,   File.join(LIB, 'sprite_factory/library/rmagick')    # concrete module for using RMagick   (loaded on demand)
-    autoload :ChunkyPng, File.join(LIB, 'sprite_factory/library/chunky_png') # concrete module for using ChunkyPng (ditto)
+    autoload :Base,       File.join(LIB, 'sprite_factory/library/base')         # common behaviour for all libraries
+    autoload :RMagick,    File.join(LIB, 'sprite_factory/library/rmagick')      # concrete module for using RMagick   (loaded on demand)
+    autoload :ChunkyPng,  File.join(LIB, 'sprite_factory/library/chunky_png')   # concrete module for using ChunkyPng (ditto)
+    autoload :MiniMagick, File.join(LIB, 'sprite_factory/library/mini_magick')  # concrete module for using MiniMagick (ditto)
 
     def self.rmagick
       RMagick
@@ -64,6 +66,10 @@ module SpriteFactory
 
     def self.chunkypng
       ChunkyPng
+    end
+
+    def self.mini_magick
+      MiniMagick
     end
 
   end

@@ -2,20 +2,18 @@ require 'chunky_png'
 
 module SpriteFactory
   module Library
-    module ChunkyPng
+    class ChunkyPng < Base
 
       VALID_EXTENSIONS = :png
 
-      def self.load(files)
-        files.map do |filename|
-          image = ChunkyPNG::Image.from_file(filename)
-          {
-            :filename => filename,
-            :image    => image,
-            :width    => image.width,
-            :height   => image.height
-          }
-        end
+      def self.load_file(filename)
+        image = ChunkyPNG::Image.from_file(filename)
+        {
+          :filename => filename,
+          :image    => image,
+          :width    => image.width,
+          :height   => image.height
+        }
       end
 
       def self.create(filename, images, width, height)
@@ -26,6 +24,6 @@ module SpriteFactory
         target.save(filename)
       end
 
-    end # module ChunkyPng
+    end # class ChunkyPng
   end # module Library
 end # module SpriteFactory

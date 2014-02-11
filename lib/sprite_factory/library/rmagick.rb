@@ -2,20 +2,18 @@ require 'RMagick'
 
 module SpriteFactory
   module Library
-    module RMagick
+    class RMagick < Base
 
       VALID_EXTENSIONS = [:png, :jpg, :jpeg, :gif, :ico]
 
-      def self.load(files)
-        files.map do |filename|
-          image = Magick::Image.read(filename)[0]
-          {
-            :filename => filename,
-            :image    => image,
-            :width    => image.columns,
-            :height   => image.rows
-          }
-        end
+      def self.load_file(filename)
+        image = Magick::Image.read(filename)[0]
+        {
+          :filename => filename,
+          :image    => image,
+          :width    => image.columns,
+          :height   => image.rows
+        }
       end
 
       def self.create(filename, images, width, height)
@@ -27,6 +25,6 @@ module SpriteFactory
         target.write(filename)
       end
 
-    end # module RMagick
+    end # class RMagick
   end # module Library
 end # module SpriteFactory
