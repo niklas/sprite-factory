@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SpriteFactory::Image do
-  let(:native_image) { stub 'Native' }
+  let(:native_image) { double 'Native' }
 
   describe '.new' do
     it 'takes a list of filename, image, width and height' do

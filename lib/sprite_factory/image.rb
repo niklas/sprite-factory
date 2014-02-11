@@ -1,11 +1,14 @@
 module SpriteFactory
   class Image
 
-    def initialize(filename, image, width, height)
-      @filename = filename
-      @image = image
-      @width = width
-      @height = height
+    def initialize(*args)
+      if args.length == 4
+        @filename, @image, @width, @height = *args
+      elsif args.length == 2
+        @width, @height = *args
+      else
+        raise ArgumentError, "give 2 or 4 arguments"
+      end
     end
 
     attr_reader :filename
