@@ -14,6 +14,15 @@ module SpriteFactory
       def self.create(filename, images, width, height)
         raise NotImplementedError, "please implement #{self}.create(filename, images, width, height)"
       end
+
+      def self.new_image(attributes)
+        SpriteFactory::Image.new(
+          attributes[:filename],
+          attributes[:image],
+          attributes[:width],
+          attributes[:height]
+        )
+      end
     end # class Base
   end # module Library
 end # module SpriteFactory

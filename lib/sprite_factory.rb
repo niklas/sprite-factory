@@ -9,6 +9,7 @@ module SpriteFactory
 
   autoload :Runner,  File.join(LIB, 'sprite_factory/runner')  # controller that glues everything together
   autoload :Style,   File.join(LIB, 'sprite_factory/style')   # style generators all live in a single module (for now)
+  autoload :Image,   File.join(LIB, 'sprite_factory/image')   # wrap the loaded files
 
   def self.run!(input, config = {}, &block)
     Runner.new(input, config).run!(&block)

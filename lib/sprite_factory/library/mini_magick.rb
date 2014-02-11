@@ -5,12 +5,12 @@ module SpriteFactory
     class MiniMagick < Base
       def self.load_file(filename)
         image = ::MiniMagick::Image.open(filename)
-        {
+        new_image(
           :filename => filename,
           :image    => image,
           :width    => image[:width],
           :height   => image[:height]
-        }
+        )
       end
 
       def self.create(filename, images, width, height)
@@ -20,8 +20,8 @@ module SpriteFactory
         c.compose 'SrcOver'
 
         images.each do |image|
-          c.push image[:image].path
-          c.geometry "+#{image[:x]}+#{image[:y]}"
+          c.push image.image.path
+          c.geometry "+#{image.x}+#{image.y}"
           c.composite
         end
         c.push filename

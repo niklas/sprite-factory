@@ -176,32 +176,11 @@ module SpriteFactory
       input_path = Pathname.new(input)
       images = library.load(image_files)
       images.each do |i|
-        i[:name], i[:ext] = map_image_filename(i[:filename], input_path)
-        raise RuntimeError, "image #{i[:name]} does not fit within a fixed width of #{width}" if width && (width < i[:width])
-        raise RuntimeError, "image #{i[:name]} does not fit within a fixed height of #{height}" if height && (height < i[:height])
+        i.build_name_and_ext!(input_path)
+        raise RuntimeError, "image #{i.name} does not fit within a fixed width of #{width}" if width && (width < i.width)
+        raise RuntimeError, "image #{i.name} does not fit within a fixed height of #{height}" if height && (height < i.height)
       end
-      images.sort_by {|i| [image_name_without_pseudo_class(i), image_pseudo_class_priority(i)] }
-    end
-
-    def map_image_filename(filename, input_path)
-      name = Pathname.new(filename).relative_path_from(input_path).to_s.gsub(File::SEPARATOR, "_")
-      name = name.gsub('--', ':')
-      name = name.gsub('__', ' ')
-      ext  = File.extname(name)
-      name = name[0...-ext.length] unless ext.empty?
-      [name, ext]
-    end
-
-    def image_name_without_pseudo_class(image)
-      image[:name].split(':').first
-    end
-
-    def image_pseudo_class(image)
-      image[:name].slice(/:.*?\Z/)
-    end
-
-    def image_pseudo_class_priority(image)
-      PSEUDO_CLASS_ORDER.index(image_pseudo_class(image))
+      images.sort_by {|i| [i.name_without_pseudo_class, i.pseudo_class_priority] }
     end
 
     #----------------------------------------------------------------------------
@@ -226,7 +205,7 @@ module SpriteFactory
     def style(selector, url, images, &block)
       defaults = Style.generate(style_name, selector, url, images) # must call, even if custom block is given, because it stashes generated css style into image[:style] attributes
       if block_given?
-        yield images.inject({}) {|h,i| h[i[:name].to_sym] = i; h} # provide custom rule builder a hash by image name
+        yield images.inject({}) {|h,i| h[i.name.to_sym] = i; h} # provide custom rule builder a hash by image name
       else
         defaults
       end
@@ -254,7 +233,7 @@ module SpriteFactory
       return <<-EOF
 
         Creating a sprite from following images:
-        \n#{images.map{|i| "        #{report_path(i[:filename])} (#{i[:width]}x#{i[:height]})" }.join("\n")}
+        \n#{images.map{|i| "        #{report_path(i.filename)} (#{i.width}x#{i.height})" }.join("\n")}
 
         Output files:
           #{report_path(output_image_file)}

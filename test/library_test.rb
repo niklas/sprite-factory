@@ -27,12 +27,12 @@ class SpriteFactory::LibraryTest < SpriteFactory::TestCase
         images = library.load(REGULAR)
         x = 0
         images.each do |image|
-          image[:x] = x
-          image[:y] = 0
-          x = x + image[:width]
+          image.x = x
+          image.y = 0
+          x = x + image.width
         end
-        width  = images.map{|i| i[:width]}.inject(0){|n,w| n = n + w }
-        height = images.map{|i| i[:height]}.max
+        width  = images.map(&:width).inject(0){|n,w| n = n + w }
+        height = images.map(&:height).max
         library.create(output_path('regular.horizontal.png'), images, width, height)
         assert_reference_image('regular.horizontal.png')
       end
@@ -47,9 +47,9 @@ class SpriteFactory::LibraryTest < SpriteFactory::TestCase
   def assert_images(expected, actual, msg = nil)
     assert_equal(expected.length, actual.length, "#{msg} - expected the same number of images")
     expected.length.times do |n|
-      assert_equal(expected[n][:filename], actual[n][:filename], "#{msg} - unexpected filename at index #{n}")
-      assert_equal(expected[n][:width],    actual[n][:width],    "#{msg} - unexpected width at index #{n}")
-      assert_equal(expected[n][:height],   actual[n][:height],   "#{msg} - unexpected height at index #{n}")
+      assert_equal(expected[n][:filename], actual[n].filename, "#{msg} - unexpected filename at index #{n}")
+      assert_equal(expected[n][:width],    actual[n].width,    "#{msg} - unexpected width at index #{n}")
+      assert_equal(expected[n][:height],   actual[n].height,   "#{msg} - unexpected height at index #{n}")
     end
   end
 

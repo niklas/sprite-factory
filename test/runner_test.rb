@@ -197,7 +197,7 @@ module SpriteFactory
           "stackoverflow",
           "thief"
         ]
-        actual = Runner.new(FORMATS_PATH).load_images.map{|i| i[:name]}
+        actual = Runner.new(FORMATS_PATH).load_images.map(&:name)
         assert_equal(expected, actual)
       end
     end
@@ -218,7 +218,7 @@ module SpriteFactory
           "div.foo img.icon:hover",
           "div.foo img.icon:active",
         ]
-        actual = Runner.new(HOVER_PATH).load_images.map{|i| i[:name]}
+        actual = Runner.new(HOVER_PATH).load_images.map(&:name)
         assert_equal(expected, actual)
       end
     end
