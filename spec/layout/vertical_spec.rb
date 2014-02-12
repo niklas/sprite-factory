@@ -2,17 +2,6 @@ require 'spec_helper'
 
 describe SpriteFactory::Layout::Vertical do
 
-  let(:regular_images) {
-    (1..5).map { SpriteFactory::Image.new 20, 10 }
-  }
-
-  let(:irregular_images) {[
-    SpriteFactory::Image.new( 20,  50 ),
-    SpriteFactory::Image.new( 40,  40 ),
-    SpriteFactory::Image.new( 60,  30 ),
-    SpriteFactory::Image.new( 80,  20 ),
-    SpriteFactory::Image.new( 100, 10 )
-  ]}
 
   it 'arranges regular images' do
     should arrange(regular_images).
