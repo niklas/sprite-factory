@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'guard'
   s.add_development_dependency 'guard-rspec', '~> 4.2.6'
+  s.add_development_dependency 'sass'
 
   s.has_rdoc         = false
   s.extra_rdoc_files = ["README.md"]
