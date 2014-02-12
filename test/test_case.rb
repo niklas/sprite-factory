@@ -1,8 +1,15 @@
 require File.expand_path('../lib/sprite_factory', File.dirname(__FILE__))
 require 'test/unit'
+require 'rspec/mocks'
 
 module SpriteFactory
   class TestCase < Test::Unit::TestCase
+    def setup
+      super
+      RSpec::Mocks.setup(Object)
+      RSpec::Mocks.setup(self)
+    end
+
 
     #----------------------------------------------------------------------------
 
@@ -114,6 +121,12 @@ module SpriteFactory
     end
 
     #----------------------------------------------------------------------------
+
+    def build_image(w, h, attrs={})
+      SpriteFactory::Image.new(w, h).tap do |i|
+        i.stub attrs unless attrs.empty?
+      end
+    end
 
   end # class TestCase
 end # module SpriteFactory

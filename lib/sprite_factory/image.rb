@@ -25,6 +25,8 @@ module SpriteFactory
 
     attr_accessor :w, :h # packet layout
 
+    attr_accessor :selector, :name, :style
+
     def build_name_and_ext!(input_path)
       name = Pathname.new(filename).relative_path_from(input_path).to_s.gsub(File::SEPARATOR, "_")
       name = name.gsub('--', ':')

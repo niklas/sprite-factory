@@ -116,8 +116,8 @@ module SpriteFactory
     def test_generate_custom_sprite
       integration_test(CUSTOM_PATH) do |images|
         rules = []
-        rules << "div.running img.button { cursor: pointer; #{images[:running][:style]} }"
-        rules << "div.stopped img.button { cursor: pointer; #{images[:stopped][:style]} }"
+        rules << "div.running img.button { cursor: pointer; #{images[:running].style} }"
+        rules << "div.stopped img.button { cursor: pointer; #{images[:stopped].style} }"
         rules.join("\n")
       end
     end
