@@ -85,3 +85,5 @@ module SpriteFactory
 
 end
 
+
+require 'sprite_factory/railtie' if defined?(Rails)
