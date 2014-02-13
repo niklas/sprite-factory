@@ -11,36 +11,48 @@ describe SpriteFactory::SprocketsRunner do
     subject { described_class.new group, source_directories: source_directories }
 
     describe '#directories' do
-      it 'includes directory matching the group' do
-        dir = '/deep/path/to/app/assets/images/sprites/common'
-        source_directories << dir
-        subject.directories.should include(dir)
+      it 'includes directory containing the group' do
+        temp_filesystem do |root|
+          dir = root.mkdir 'app/assets/images/sprites/common'
+          source_directories << root.join('app/assets/images')
+          subject.directories.should include(dir)
+        end
       end
 
-      it 'excludes directory not matching the group' do
-        dir = '/deep/path/to/app/assets/images/sprites/special'
-        source_directories << dir
-        subject.directories.should_not include(dir)
+      it 'excludes directory not containing the group' do
+        temp_filesystem do |root|
+          dir = root.mkdir 'app/assets/images/sprites/special'
+          source_directories << root.join('app/assets/images')
+          subject.directories.should_not include(dir)
+        end
       end
 
-      it 'excludes directory almost matching the group' do
-        dir = '/deep/path/to/app/assets/images/sprites/common2'
-        source_directories << dir
-        subject.directories.should_not include(dir)
+      it 'excludes directory containing almost the group' do
+        temp_filesystem do |root|
+          dir = root.mkdir 'app/assets/images/sprites/common2'
+          source_directories << root.join('app/assets/images')
+          subject.directories.should_not include(dir)
+        end
       end
 
-      it 'excludes directory outside of sprites dir' do
-        dir = '/deep/path/to/app/assets/images/cokes/common'
-        source_directories << dir
-        subject.directories.should_not include(dir)
+      it 'excludes directory containing no sprites dir' do
+        temp_filesystem do |root|
+          dir = root.mkdir 'app/assets/images/cokes/common'
+          source_directories << root.join('app/assets/images')
+          subject.directories.should_not include(dir)
+        end
       end
     end
 
     describe '#image_files' do
+      let(:directories) { [] }
+      before :each do
+        subject.stub directories: directories
+      end
       it 'finds files in all directories' do
         temp_filesystem do |root|
-          source_directories << root.mkdir('images/sprites/common')
-          source_directories << root.mkdir('vendor/sprites/common')
+          directories << root.mkdir('images/sprites/common')
+          directories << root.mkdir('vendor/sprites/common')
           icon = root.mkfile('images/sprites/common/icon.png')
           logo = root.mkfile('vendor/sprites/common/logo.png')
 
@@ -51,7 +63,7 @@ describe SpriteFactory::SprocketsRunner do
 
       it 'ignores non-image files' do
         temp_filesystem do |root|
-          source_directories << root.mkdir('images/sprites/common')
+          directories << root.mkdir('images/sprites/common')
           readme = root.mkfile('images/sprites/common/readme.txt')
           subject.send(:image_files).should_not include(readme)
         end
@@ -59,8 +71,8 @@ describe SpriteFactory::SprocketsRunner do
 
       it 'prefers files earlier in the list of directories' do
         temp_filesystem do |root|
-          source_directories << root.mkdir('images/sprites/common')
-          source_directories << root.mkdir('vendor/sprites/common')
+          directories << root.mkdir('images/sprites/common')
+          directories << root.mkdir('vendor/sprites/common')
           icon1 = root.mkfile('images/sprites/common/icon.png')
           icon2 = root.mkfile('vendor/sprites/common/icon.png')
 

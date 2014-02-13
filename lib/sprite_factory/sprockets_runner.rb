@@ -5,10 +5,12 @@ module SpriteFactory
     # Asset Pipeline
     attr_reader :images
 
+    # Paths which match the group name and may contain images
     def directories
-      source_directories.select do |dir|
-        File.basename( File.dirname(dir) ) == 'sprites' &&
-        File.basename(dir) == input
+      source_directories.map do |dir|
+        File.join(dir, 'sprites', input)
+      end.select do |dir|
+        File.directory?( dir )
       end
     end
 
