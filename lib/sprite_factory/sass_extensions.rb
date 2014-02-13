@@ -1,7 +1,8 @@
 require 'sass'
 module SpriteFactory
+
   # provides Sass functions to access attributes of sprites.
-  #
+
   # Strongly inspired by railsjedi/sprite
   module SassExtensions
     def sprite_position(group, image, x=nil, y=nil)
@@ -16,6 +17,26 @@ module SpriteFactory
 
     def sprite_height(*args)
       sprite_attr(:height, *args)
+    end
+
+    # one SprocketsRunner for every group
+    # cache runners between different EvaluationContexts
+    def self.sprite_runner(group)
+      group_name = group.value
+      @__sprite_runners ||= {}
+      @__sprite_runners[group_name] ||=
+        SpriteFactory::SprocketsRunner.new(
+          group_name,
+          sprite_runner_config.merge(nocss: true)
+      ).tap(&:run!)
+    end
+
+    def self.clear_sprite_runner_cache!
+      @__sprite_runners = {}
+    end
+
+    def self.sprite_runner_config
+      @__sprite_runner_config ||= YAML.load_file('config/sprite_factory.yml').symbolize_keys
     end
 
   protected
@@ -43,25 +64,14 @@ module SpriteFactory
       end
     end
 
-    # one SprocketsRunner for every group
-    def sprite_runner(group)
-      group_name = group.value
-      @__sprite_runners ||= {}
-      @__sprite_runners[group_name] ||=
-        SpriteFactory::SprocketsRunner.new(
-          group_name,
-          sprite_runner_config.merge(nocss: true)
-        ).tap(&:run!)
-    end
-
     def sprite_data(group, image)
       sprite_runner(group).images.find do |generated|
         generated.name_without_pseudo_class == image.value
       end
     end
 
-    def sprite_runner_config
-      @__sprite_runner_config ||= YAML.load_file('config/sprite_factory.yml').symbolize_keys
+    def sprite_runner(*a)
+      SpriteFactory::SassExtensions.sprite_runner(*a)
     end
   end
 end

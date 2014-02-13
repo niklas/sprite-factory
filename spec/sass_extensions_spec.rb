@@ -2,11 +2,15 @@ require 'spec_helper'
 require 'sprite_factory/sass_extensions'
 
 describe SpriteFactory::SassExtensions do
+  before :each do
+    described_class.clear_sprite_runner_cache!
+  end
   it 'is a module' do
     described_class.should be_a(Module)
   end
 
-  let(:obj) { Object.new.tap { |o| o.extend described_class } }
+  let(:klass) { Class.new.tap { |k| k.send :include, described_class } }
+  let(:obj) { klass.new }
 
   # Sass wraps its arguments
   def sass_val(v)
@@ -80,13 +84,13 @@ describe SpriteFactory::SassExtensions do
 
 
 
-  describe '#sprite_runner (protected)' do
+  describe '.sprite_runner (protected)' do
     let(:common_runner) { double 'common SprocketsRunner', run!: true }
     let(:special_runner) { double 'special SprocketsRunner', run!: true }
     let(:expected_options) { { nocss: true } }
     let(:config)  { {} }  #
     before :each do
-      obj.stub sprite_runner_config: config
+      described_class.stub sprite_runner_config: config
     end
 
     it 'creates and runs a SprocketsRunner for every unknown group' do
@@ -121,7 +125,7 @@ describe SpriteFactory::SassExtensions do
     end
   end
 
-  describe '#sprite_runner_config (protected)' do
+  describe '.sprite_runner_config' do
     it 'loads configuration from config/sprite_factory.yml and uses symbols' do
       loaded = { "foo" => 23 }
       usable = { foo: 23 }   # we use symbols all over the lib
@@ -130,7 +134,7 @@ describe SpriteFactory::SassExtensions do
         with('config/sprite_factory.yml').
         and_return(loaded)
 
-      obj.send(:sprite_runner_config).should == usable
+      described_class.send(:sprite_runner_config).should == usable
     end
   end
 end
