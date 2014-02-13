@@ -19,6 +19,12 @@ describe SpriteFactory::SassExtensions do
     end
   end
 
+  RSpec::Matchers.define :be_sass_number do |string|
+    match do |actual|
+      actual.is_a?(::Sass::Script::Number) && actual.to_s == string
+    end
+  end
+
   describe 'with some images' do
     let(:icon) { double('Image(icon)'  , name_without_pseudo_class: 'icon') }
     let(:logo) { double('Image(logo)'  , name_without_pseudo_class: 'logo') }
@@ -58,7 +64,7 @@ describe SpriteFactory::SassExtensions do
       it 'returns the width of the sprite' do
         logo.stub width: 23
         obj.sprite_width( sass_val('common'), sass_val('logo') ).
-          should be_sass('23px')
+          should be_sass_number('23px')
       end
     end
 
@@ -66,7 +72,7 @@ describe SpriteFactory::SassExtensions do
       it 'returns the height of the sprite' do
         logo.stub height: 42
         obj.sprite_height( sass_val('common'), sass_val('logo') ).
-          should be_sass('42px')
+          should be_sass_number('42px')
       end
     end
 

@@ -11,11 +11,11 @@ module SpriteFactory
     end
 
     def sprite_width(*args)
-      ::Sass::Script::String.new sprite_attr(:width, *args)
+      sprite_attr(:width, *args)
     end
 
     def sprite_height(*args)
-      ::Sass::Script::String.new sprite_attr(:height, *args)
+      sprite_attr(:height, *args)
     end
 
   protected
@@ -37,7 +37,7 @@ module SpriteFactory
       sprite = sprite_data(group, image)
       if sprite
         val = sprite.public_send(attr)
-        "#{val}px"
+        ::Sass::Script::Number.new val, %w(px)
       else
         ""
       end
