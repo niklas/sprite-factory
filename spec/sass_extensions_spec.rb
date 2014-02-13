@@ -19,7 +19,7 @@ describe SpriteFactory::SassExtensions do
     end
   end
 
-  describe '#sprite_position' do
+  describe 'with some images' do
     let(:icon) { double('Image(icon)'  , name_without_pseudo_class: 'icon') }
     let(:logo) { double('Image(logo)'  , name_without_pseudo_class: 'logo') }
     let(:images) {[
@@ -29,29 +29,50 @@ describe SpriteFactory::SassExtensions do
     ]}
     let(:runner) { double 'Runner', images: images }
 
-    def sprite_position(*a)
-      obj.sprite_position *(a.map { |e| sass_val(e) })
-    end
-
     before :each do
       obj.stub sprite_runner: runner
     end
-    it 'returns sprite offset' do
-      icon.stub x: 0, y: 5
-      sprite_position("common", "icon").should be_sass('0px 5px')
+
+    describe '#sprite_position' do
+      def sprite_position(*a)
+        obj.sprite_position *(a.map { |e| sass_val(e) })
+      end
+      it 'returns sprite offset' do
+        icon.stub x: 0, y: 5
+        sprite_position("common", "icon").should be_sass('0px 5px')
+      end
+
+      it 'returns another sprite offset' do
+        logo.stub x: 0, y: 65
+        sprite_position("common", "logo").should be_sass('0px 65px')
+      end
+
+      it 'takes additional offset' do
+        logo.stub x: 0, y: 65
+        sprite_position("common", "logo", 3, 5).
+          should be_sass('3px 70px')
+      end
     end
 
-    it 'returns another sprite offset' do
-      logo.stub x: 0, y: 65
-      sprite_position("common", "logo").should be_sass('0px 65px')
+    describe '#sprite_width' do
+      it 'returns the width of the sprite' do
+        logo.stub width: 23
+        obj.sprite_width( sass_val('common'), sass_val('logo') ).
+          should be_sass('23px')
+      end
     end
 
-    it 'takes additional offset' do
-      logo.stub x: 0, y: 65
-      sprite_position("common", "logo", 3, 5).
-        should be_sass('3px 70px')
+    describe '#sprite_height' do
+      it 'returns the height of the sprite' do
+        logo.stub height: 42
+        obj.sprite_height( sass_val('common'), sass_val('logo') ).
+          should be_sass('42px')
+      end
     end
+
   end
+
+
 
   describe '#sprite_runner (protected)' do
     let(:common_runner) { double 'common SprocketsRunner', run!: true }
