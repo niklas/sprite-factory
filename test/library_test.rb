@@ -22,6 +22,10 @@ class SpriteFactory::LibraryTest < SpriteFactory::TestCase
       assert_images(IRREGULAR_INFO,  library.load(IRREGULAR))
     end
 
+    define_method "test_valid_extensions_defined_in_#{name}" do
+      assert defined?(library::VALID_EXTENSIONS), "must provide VALID_EXTENSIONS in #{library}"
+    end
+
     define_method "test_create_using_#{name}" do
       with_clean_output do
         images = library.load(REGULAR)

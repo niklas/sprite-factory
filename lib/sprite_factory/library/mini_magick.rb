@@ -3,6 +3,9 @@ require 'mini_magick'
 module SpriteFactory
   module Library
     class MiniMagick < Base
+
+      VALID_EXTENSIONS = [:png, :jpg, :jpeg, :gif, :ico]
+
       def self.load_file(filename)
         image = ::MiniMagick::Image.open(filename)
         new_image(
