@@ -159,10 +159,10 @@ module SpriteFactory
       end
     end
 
-    def image_files
-      return [] if input.nil?
+    def image_files(directory=input)
+      return [] if directory.nil?
       valid_extensions = library::VALID_EXTENSIONS
-      expansions = Array(valid_extensions).map{|ext| File.join(input, "**", "*.#{ext}")}
+      expansions = Array(valid_extensions).map{|ext| File.join(directory, "**", "*.#{ext}")}
       SpriteFactory.find_files(*expansions)
     end
 

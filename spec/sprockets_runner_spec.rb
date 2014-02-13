@@ -37,8 +37,37 @@ describe SpriteFactory::SprocketsRunner do
     end
 
     describe '#image_files' do
-      it 'finds files in all directories'
-      it 'prefers files earlier in the list of directories'
+      it 'finds files in all directories' do
+        temp_filesystem do |root|
+          source_directories << root.mkdir('images/sprites/common')
+          source_directories << root.mkdir('vendor/sprites/common')
+          icon = root.mkfile('images/sprites/common/icon.png')
+          logo = root.mkfile('vendor/sprites/common/logo.png')
+
+          subject.send(:image_files).should include(icon)
+          subject.send(:image_files).should include(logo)
+        end
+      end
+
+      it 'ignores non-image files' do
+        temp_filesystem do |root|
+          source_directories << root.mkdir('images/sprites/common')
+          readme = root.mkfile('images/sprites/common/readme.txt')
+          subject.send(:image_files).should_not include(readme)
+        end
+      end
+
+      it 'prefers files earlier in the list of directories' do
+        temp_filesystem do |root|
+          source_directories << root.mkdir('images/sprites/common')
+          source_directories << root.mkdir('vendor/sprites/common')
+          icon1 = root.mkfile('images/sprites/common/icon.png')
+          icon2 = root.mkfile('vendor/sprites/common/icon.png')
+
+          subject.send(:image_files).should include(icon1)
+          subject.send(:image_files).should_not include(icon2)
+        end
+      end
     end
 
     describe '#run!' do
