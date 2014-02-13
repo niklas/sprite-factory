@@ -77,14 +77,18 @@ describe SpriteFactory::SassExtensions do
   describe '#sprite_runner (protected)' do
     let(:common_runner) { double 'common SprocketsRunner', run!: true }
     let(:special_runner) { double 'special SprocketsRunner', run!: true }
-    let(:default_options) { { nocss: true } }
+    let(:expected_options) { { nocss: true } }
+    let(:config)  { {} }  #
+    before :each do
+      obj.stub sprite_runner_config: config
+    end
 
     it 'creates and runs a SprocketsRunner for every unknown group' do
       SpriteFactory::SprocketsRunner.should_receive(:new).
-        with('common', default_options).once.
+        with('common', expected_options).once.
         and_return(common_runner)
       SpriteFactory::SprocketsRunner.should_receive(:new).
-        with('special', default_options).once.
+        with('special', expected_options).once.
         and_return(special_runner)
 
       obj.send(:sprite_runner, sass_val('common')).should == common_runner
@@ -93,12 +97,34 @@ describe SpriteFactory::SassExtensions do
 
     it 'caches runners' do
       SpriteFactory::SprocketsRunner.should_receive(:new).
-        with('common', default_options).once.
+        with('common', expected_options).once.
         and_return(common_runner)
 
       one = obj.send(:sprite_runner, sass_val('common'))
       two = obj.send(:sprite_runner, sass_val('common'))
       one.should === two
+    end
+
+    it 'can be configured' do
+      config[:library] = :mini_magick
+      expected_options[:library] = :mini_magick
+      SpriteFactory::SprocketsRunner.should_receive(:new).
+        with('common', expected_options).once.
+        and_return(common_runner)
+      obj.send(:sprite_runner, sass_val('common'))
+    end
+  end
+
+  describe '#sprite_runner_config (protected)' do
+    it 'loads configuration from config/sprite_factory.yml and uses symbols' do
+      loaded = { "foo" => 23 }
+      usable = { foo: 23 }   # we use symbols all over the lib
+      loaded.stub symbolize_keys: usable
+      YAML.should_receive(:load_file).
+        with('config/sprite_factory.yml').
+        and_return(loaded)
+
+      obj.send(:sprite_runner_config).should == usable
     end
   end
 end

@@ -50,7 +50,7 @@ module SpriteFactory
       @__sprite_runners[group_name] ||=
         SpriteFactory::SprocketsRunner.new(
           group_name,
-          nocss: true
+          sprite_runner_config.merge(nocss: true)
         ).tap(&:run!)
     end
 
@@ -58,6 +58,10 @@ module SpriteFactory
       sprite_runner(group).images.find do |generated|
         generated.name_without_pseudo_class == image.value
       end
+    end
+
+    def sprite_runner_config
+      @__sprite_runner_config ||= YAML.load_file('config/sprite_factory.yml').symbolize_keys
     end
   end
 end
