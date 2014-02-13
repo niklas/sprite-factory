@@ -35,15 +35,19 @@ module SpriteFactory
       end
     end
 
-    def sprite_runner
-      @__sprite_runner ||= SpriteFactory::Runner.new('somewhere', nocss: true).tap do |runner|
-        runner.run!
-      end
+    # one SprocketsRunner for every group
+    def sprite_runner(group)
+      group_name = group.value
+      @__sprite_runners ||= {}
+      @__sprite_runners[group_name] ||=
+        SpriteFactory::SprocketsRunner.new(
+          group_name,
+          nocss: true
+        ).tap(&:run!)
     end
 
-    # TODO consider group
     def sprite_data(group, image)
-      sprite_runner.images.find do |generated|
+      sprite_runner(group).images.find do |generated|
         generated.name_without_pseudo_class == image.value
       end
     end

@@ -52,4 +52,32 @@ describe SpriteFactory::SassExtensions do
         should be_sass('3px 70px')
     end
   end
+
+  describe '#sprite_runner (protected)' do
+    let(:common_runner) { double 'common SprocketsRunner', run!: true }
+    let(:special_runner) { double 'special SprocketsRunner', run!: true }
+    let(:default_options) { { nocss: true } }
+
+    it 'creates and runs a SprocketsRunner for every unknown group' do
+      SpriteFactory::SprocketsRunner.should_receive(:new).
+        with('common', default_options).once.
+        and_return(common_runner)
+      SpriteFactory::SprocketsRunner.should_receive(:new).
+        with('special', default_options).once.
+        and_return(special_runner)
+
+      obj.send(:sprite_runner, sass_val('common')).should == common_runner
+      obj.send(:sprite_runner, sass_val('special')).should == special_runner
+    end
+
+    it 'caches runners' do
+      SpriteFactory::SprocketsRunner.should_receive(:new).
+        with('common', default_options).once.
+        and_return(common_runner)
+
+      one = obj.send(:sprite_runner, sass_val('common'))
+      two = obj.send(:sprite_runner, sass_val('common'))
+      one.should === two
+    end
+  end
 end
