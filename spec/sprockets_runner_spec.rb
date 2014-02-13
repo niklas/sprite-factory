@@ -7,10 +7,33 @@ describe SpriteFactory::SprocketsRunner do
 
   describe 'given a group name as input' do
     let(:group) { 'common' }
-    subject { described_class.new group }
+    let(:source_directories) { [] }
+    subject { described_class.new group, source_directories: source_directories }
 
     describe '#directories' do
-      it 'finds all directories matching the group'
+      it 'includes directory matching the group' do
+        dir = '/deep/path/to/app/assets/images/sprites/common'
+        source_directories << dir
+        subject.directories.should include(dir)
+      end
+
+      it 'excludes directory not matching the group' do
+        dir = '/deep/path/to/app/assets/images/sprites/special'
+        source_directories << dir
+        subject.directories.should_not include(dir)
+      end
+
+      it 'excludes directory almost matching the group' do
+        dir = '/deep/path/to/app/assets/images/sprites/common2'
+        source_directories << dir
+        subject.directories.should_not include(dir)
+      end
+
+      it 'excludes directory outside of sprites dir' do
+        dir = '/deep/path/to/app/assets/images/cokes/common'
+        source_directories << dir
+        subject.directories.should_not include(dir)
+      end
     end
 
     describe '#image_files' do
