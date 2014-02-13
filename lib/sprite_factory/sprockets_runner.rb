@@ -11,6 +11,12 @@ module SpriteFactory
       end
     end
 
+    def run!
+      images = load_images
+      max    = layout_images(images)
+      create_sprite(images, max[:width], max[:height])
+    end
+
   protected
     def source_directories
       @config.fetch(:source_directories) { Rails.application.assets.paths }

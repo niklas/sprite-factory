@@ -15,15 +15,19 @@ module TempFilesystemHelper
     end
 
     def mkdir(path)
-      full = File.join(@root, path)
+      full = join path
       FileUtils.mkdir_p full
       full
     end
 
     def mkfile(path)
-      full = File.join(@root, path)
+      full = join path
       FileUtils.touch full
       full
+    end
+
+    def join(path)
+      File.join(@root, path)
     end
 
     private

@@ -71,7 +71,16 @@ describe SpriteFactory::SprocketsRunner do
     end
 
     describe '#run!' do
-      it 'builds the sprite'
+      it 'builds the sprite' do
+        subject.stub image_files: SpriteFactory.find_files(File.join('test/images/regular', '*.png'))
+        temp_filesystem do |root|
+          output = root.join('common.png')
+          subject.config[:output_image] = output
+          expect { subject.run! }.to change { File.exist?(output) }.
+            from(false).to(true)
+        end
+
+      end
       it 'stores the images for reference by SassExtensions'
     end
   end
