@@ -3,6 +3,7 @@ module SpriteFactory
     # here, #input is not the path to a directory, but the sprite-group name
     # for which images should be build form all possible directories in the
     # Asset Pipeline
+    attr_reader :images
 
     def directories
       source_directories.select do |dir|
@@ -15,6 +16,7 @@ module SpriteFactory
       images = load_images
       max    = layout_images(images)
       create_sprite(images, max[:width], max[:height])
+      @images = images
     end
 
   protected

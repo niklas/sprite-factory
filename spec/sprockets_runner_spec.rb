@@ -71,17 +71,29 @@ describe SpriteFactory::SprocketsRunner do
     end
 
     describe '#run!' do
-      it 'builds the sprite' do
+      before :each do
         subject.stub image_files: SpriteFactory.find_files(File.join('test/images/regular', '*.png'))
+      end
+      it 'builds the sprite' do
         temp_filesystem do |root|
           output = root.join('common.png')
           subject.config[:output_image] = output
           expect { subject.run! }.to change { File.exist?(output) }.
             from(false).to(true)
         end
-
       end
-      it 'stores the images for reference by SassExtensions'
+      it 'stores the images for reference by SassExtensions' do
+        temp_filesystem do |root|
+          output = root.join('common.png')
+          subject.config[:output_image] = output
+          subject.run!
+
+          subject.images.should have_at_least(5).records
+          subject.images.each do |image|
+            image.should be_a(SpriteFactory::Image)
+          end
+        end
+      end
     end
   end
 
