@@ -173,10 +173,9 @@ module SpriteFactory
     end
 
     def load_images
-      input_path = Pathname.new(input)
       images = library.load(image_files)
       images.each do |i|
-        i.build_name_and_ext!(input_path)
+        i.build_name_and_ext!(input)
         raise RuntimeError, "image #{i.name} does not fit within a fixed width of #{width}" if width && (width < i.width)
         raise RuntimeError, "image #{i.name} does not fit within a fixed height of #{height}" if height && (height < i.height)
       end

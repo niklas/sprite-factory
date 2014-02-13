@@ -27,8 +27,13 @@ module SpriteFactory
 
     attr_accessor :selector, :name, :style
 
-    def build_name_and_ext!(input_path)
-      name = Pathname.new(filename).relative_path_from(input_path).to_s.gsub(File::SEPARATOR, "_")
+    def build_name_and_ext!(input)
+      input_path = Pathname.new(input)
+      name = if input_path.absolute? # a real directory
+               Pathname.new(filename).relative_path_from(input_path).to_s.gsub(File::SEPARATOR, "_")
+             else # assume it is the name of the sprite-group by SprocketsRunner
+               File.basename(filename)
+             end
       name = name.gsub('--', ':')
       name = name.gsub('__', ' ')
       ext  = File.extname(name)

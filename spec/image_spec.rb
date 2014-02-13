@@ -38,5 +38,30 @@ describe SpriteFactory::Image do
     end
   end
 
+  describe '#build_name_and_ext!' do
+
+    describe 'for input being a directory' do
+      it 'sets up name relative from that' do
+        image.stub filename: '/foo/bar/baz/bam.png'
+        image.build_name_and_ext! '/foo/bar'
+        image.name.should == 'baz_bam'
+      end
+
+      it 'does not complain when filename has different prefix than directory' do
+        image.stub filename: '/foo/bar/baz.png'
+        expect { image.build_name_and_ext! '/somewhere/else' }.not_to raise_error
+      end
+    end
+
+    describe 'for input being a group name' do
+      it 'just uses the basename of its filename as name' do
+        image.stub filename: '/foo/bar/baz.png'
+        image.build_name_and_ext! 'icons'
+        image.name.should == 'baz'
+      end
+    end
+
+  end
+
 
 end
