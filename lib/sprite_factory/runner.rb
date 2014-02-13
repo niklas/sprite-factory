@@ -197,6 +197,7 @@ module SpriteFactory
     end
 
     def layout_images(images)
+      raise RuntimeError, "no images found for #{input}" if images.empty?
       layout_strategy.layout(images, :width => width, :height => height, :hpadding => hpadding, :vpadding => vpadding, :hmargin => hmargin, :vmargin => vmargin)
     end
 
