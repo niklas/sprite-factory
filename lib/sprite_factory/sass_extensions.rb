@@ -19,6 +19,10 @@ module SpriteFactory
       sprite_attr(:height, *args)
     end
 
+    def sprite_file(*args)
+      sprite_attr(:filename, *args)
+    end
+
     # one SprocketsRunner for every group
     # cache runners between different EvaluationContexts
     def self.sprite_runner(group)
@@ -58,7 +62,11 @@ module SpriteFactory
       sprite = sprite_data(group, image)
       if sprite
         val = sprite.public_send(attr)
-        ::Sass::Script::Number.new val, %w(px)
+        if val.is_a?(Numeric)
+          ::Sass::Script::Number.new val, %w(px)
+        else
+          ::Sass::Script::String.new val
+        end
       else
         ""
       end

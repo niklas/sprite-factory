@@ -80,6 +80,15 @@ describe SpriteFactory::SassExtensions do
       end
     end
 
+    describe '#sprite_file' do
+      it 'returns the full path to the original image' do
+        full_path = '/earth/panem/districts/12.png'
+        logo.stub filename: full_path
+        obj.sprite_file( sass_val('common'), sass_val('logo') ).
+          should be_sass(full_path)
+      end
+    end
+
   end
 
 
