@@ -1,3 +1,4 @@
+require 'digest/md5'
 module SpriteFactory
   class Image
 
@@ -51,6 +52,11 @@ module SpriteFactory
 
     def pseudo_class_priority(pseudo_class_order=SpriteFactory::Runner::PSEUDO_CLASS_ORDER)
       pseudo_class_order.index(pseudo_class)
+    end
+
+    # MD5 hash of this file
+    def digest
+      Digest::MD5.file(filename).hexdigest
     end
 
 

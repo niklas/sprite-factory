@@ -1,9 +1,11 @@
+require 'digest/md5'
 module SpriteFactory
   class SprocketsRunner < Runner
+    SPRITE_VERSION = 1
+
     # here, #input is not the path to a directory, but the sprite-group name
     # for which images should be build form all possible directories in the
     # Asset Pipeline
-    attr_reader :images
 
     # Paths which match the group name and may contain images
     def directories
@@ -15,16 +17,41 @@ module SpriteFactory
     end
 
     def run!
-      images = load_images
-      max    = layout_images(images)
-      create_sprite(images, max[:width], max[:height])
-      @images = images
+      @images = load_images
+      max    = layout_images(@images)
+      create_sprite(@images, max[:width], max[:height])
     end
 
     def output_image_file
       @config.fetch(:output_image) do
-        output_directory.join('sprites').join("#{input}.png")
+        output_directory.join('sprites').join(name_and_hash)
       end
+    end
+
+    def name_and_hash
+      "#{input}-s#{uniqueness_hash}.png"
+    end
+
+    def uniqueness_hash
+      @uniqueness_hash ||= begin
+        sum = Digest::MD5.new
+        sum << SPRITE_VERSION.to_s
+        sum << layout_name.to_s
+        sum << output_directory.to_s
+
+        images.each do |image|
+          [:filename, :height, :width, :digest].each do |attr|
+            sum << image.send(attr).to_s
+          end
+        end
+
+        sum.hexdigest[0...10]
+      end
+      @uniqueness_hash
+    end
+
+    def images
+      @images ||= []
     end
 
   protected

@@ -8,7 +8,11 @@ describe SpriteFactory::SprocketsRunner do
   describe 'given a group name as input' do
     let(:group) { 'common' }
     let(:source_directories) { [] }
-    subject { described_class.new group, source_directories: source_directories }
+    let(:default_config) {{
+      source_directories: source_directories,
+      output_directory: Dir.pwd
+    }}
+    subject { described_class.new group, default_config }
 
     describe '#directories' do
       it 'includes directory containing the group' do
@@ -110,13 +114,42 @@ describe SpriteFactory::SprocketsRunner do
 
     describe '#output_image_file' do
       let(:asset_dir) { Pathname.new('/your/rails/public/assets') }
-      it 'outputs to the configured directory' do
+      before :each do
         subject.config[:output_directory] = asset_dir
-        dir = File.dirname(subject.output_image_file)
+      end
 
+      it 'outputs to the configured directory' do
+        dir = File.dirname(subject.output_image_file)
         dir.should == asset_dir.join('sprites').to_s
       end
 
+      it 'is digested name' do
+        subject.stub uniqueness_hash: 'abcde12345'
+        name = File.basename(subject.output_image_file)
+        name.should =~ /common-sabcde12345\.png/
+      end
+    end
+
+    describe '#uniqueness_hash' do
+      let(:busject) { described_class.new group, default_config.dup }
+
+      it 'is 10 chars long' do
+        subject.uniqueness_hash.should =~ /\A\w{10}\z/
+      end
+
+      it 'depends on layout' do
+        subject.config[:layout] = :vertical
+        busject.config[:layout] = :horizontal
+
+        subject.uniqueness_hash.should_not == busject.uniqueness_hash
+      end
+
+      it 'depends on output_directory' do
+        subject.config[:output_directory] = Pathname.new('/home/bar')
+        busject.config[:output_directory] = Pathname.new('/home/baz')
+
+        subject.uniqueness_hash.should_not == busject.uniqueness_hash
+      end
     end
   end
 

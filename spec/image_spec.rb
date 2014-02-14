@@ -63,5 +63,14 @@ describe SpriteFactory::Image do
 
   end
 
+  describe '#digest' do
+    it 'calculates md5 of the content of the file' do
+      image.stub filename: __FILE__
+      digest = image.digest
+      digest.should_not be_nil
+      digest.should =~ /\A\w{32}\z/
+    end
+  end
+
 
 end
