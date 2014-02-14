@@ -19,7 +19,9 @@ module SpriteFactory
     def run!
       @images = load_images
       max    = layout_images(@images)
-      create_sprite(@images, max[:width], max[:height])
+      if generation_required?
+        create_sprite(@images, max[:width], max[:height])
+      end
     end
 
     def output_image_file
@@ -54,6 +56,18 @@ module SpriteFactory
       @images ||= []
     end
 
+    def generation_required?
+      !File.exists?(output_image_file) || outdated?
+    end
+
+    def outdated?
+      if File.exists?(output_image_file)
+        mtime = File.mtime(output_image_file)
+        return images.any? {|image| File.mtime(image.filename) > mtime }
+      end
+      true
+    end
+
   protected
     def source_directories
       @config.fetch(:source_directories) { Rails.application.assets.paths }
@@ -78,5 +92,6 @@ module SpriteFactory
       end
       files
     end
+
   end
 end

@@ -22,6 +22,7 @@ module TempFilesystemHelper
 
     def mkfile(path)
       full = join path
+      mkdir File.dirname(path)
       FileUtils.touch full
       full
     end

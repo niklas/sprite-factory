@@ -98,6 +98,7 @@ describe SpriteFactory::SprocketsRunner do
             from(false).to(true)
         end
       end
+
       it 'stores the images for reference by SassExtensions' do
         temp_filesystem do |root|
           output = root.join('common.png')
@@ -110,6 +111,48 @@ describe SpriteFactory::SprocketsRunner do
           end
         end
       end
+
+      it 'does not build sprite unless required' do
+        temp_filesystem do |root|
+          output = root.join('common.png')
+          subject.config[:output_image] = output
+          subject.stub :generation_required? => false
+          expect { subject.run! }.to_not change { File.exist?(output) }
+        end
+      end
+    end
+
+    describe '#generation_required?' do
+      let(:images) { [] }
+      before :each do
+        subject.stub images: images
+      end
+      it 'is true when file does not exist' do
+        subject.config[:output_image] = '/whereever/whores/go'
+        subject.should be_generation_required
+      end
+      it 'is true when file is outdated' do
+        temp_filesystem do |root|
+          output      = root.mkfile('common.png')
+          sleep 0.1
+          icon        = root.mkfile('images/sprites/common/icon.png')
+          images << double('Image', filename: icon)
+          subject.config[:output_image] = output
+          subject.should be_generation_required
+        end
+      end
+      it 'is false when file exists and is uptodate' do
+        # same as above, but output made AFTER icon
+        temp_filesystem do |root|
+          icon        = root.mkfile('images/sprites/common/icon.png')
+          sleep 0.1
+          output      = root.mkfile('common.png')
+          images << double('Image', filename: icon)
+          subject.config[:output_image] = output
+          subject.should_not be_generation_required
+        end
+      end
+      it 'may be forced'
     end
 
     describe '#output_image_file' do
