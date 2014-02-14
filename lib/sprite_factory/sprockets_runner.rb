@@ -21,9 +21,19 @@ module SpriteFactory
       @images = images
     end
 
+    def output_image_file
+      @config.fetch(:output_image) do
+        output_directory.join('sprites').join("#{input}.png")
+      end
+    end
+
   protected
     def source_directories
       @config.fetch(:source_directories) { Rails.application.assets.paths }
+    end
+
+    def output_directory
+      @config.fetch(:output_directory) { Rails.public_path.join('assets') }
     end
 
   private

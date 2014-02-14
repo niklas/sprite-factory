@@ -107,6 +107,17 @@ describe SpriteFactory::SprocketsRunner do
         end
       end
     end
+
+    describe '#output_image_file' do
+      let(:asset_dir) { Pathname.new('/your/rails/public/assets') }
+      it 'outputs to the configured directory' do
+        subject.config[:output_directory] = asset_dir
+        dir = File.dirname(subject.output_image_file)
+
+        dir.should == asset_dir.join('sprites').to_s
+      end
+
+    end
   end
 
 end
