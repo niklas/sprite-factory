@@ -1,7 +1,9 @@
+require 'spec_helper'
 require 'sprite_factory/rails_compiler'
 
 describe SpriteFactory::RailsCompiler do
-  subject { described_class.new root }
+  subject { described_class.new root, source_directories:  source_directories}
+  let(:source_directories) { [] }
   let(:root) { double 'root' }
 
   describe '#run!' do
@@ -9,7 +11,27 @@ describe SpriteFactory::RailsCompiler do
   end
 
   describe '#available_sprites' do
-    it 'searches all source_directories for sprite pattern'
+    it 'finds all sprites in source_directories' do
+      temp_filesystem do |root|
+        root.mkdir 'app/assets/images/sprites/common'
+        root.mkdir 'app/assets/images/sprites/extra'
+        source_directories << root.join('app/assets/images')
+        subject.available_sprites.should include('common')
+        subject.available_sprites.should include('extra')
+      end
+    end
+
+    it 'finds each sprite only once' do
+      temp_filesystem do |root|
+        root.mkdir 'app/assets/images/sprites/common'
+        source_directories << root.join('app/assets/images')
+
+        root.mkdir 'vendor/assets/images/sprites/common'
+        source_directories << root.join('vendor/assets/images')
+
+        subject.available_sprites.should == ['common']
+      end
+    end
   end
 
   describe '#source_directories' do
