@@ -1,4 +1,5 @@
 require 'sass'
+require 'yaml'
 module SpriteFactory
 
   # provides Sass functions to access attributes of sprites.
