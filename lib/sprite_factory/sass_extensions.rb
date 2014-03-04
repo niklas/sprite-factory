@@ -29,6 +29,10 @@ module SpriteFactory
       ::Sass::Script::String.new "url(/assets/sprites/#{sprite.name_and_hash})"
     end
 
+    def sprite(group, image, x=nil, y=nil)
+      ::Sass::Script::String.new "#{sprite_url(group)} #{sprite_position(group, image, x, y)}"
+    end
+
     # one SprocketsRunner for every group
     # cache runners between different EvaluationContexts
     def self.sprite_runner(group)

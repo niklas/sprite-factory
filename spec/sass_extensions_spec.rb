@@ -99,6 +99,17 @@ describe SpriteFactory::SassExtensions do
       end
     end
 
+    describe '#sprite' do
+      it 'returns url and position in that order' do
+        group = 'mysprite'
+        name = 'logo'
+        x, y = [23, 42]
+        obj.should_receive(:sprite_url).with(group).and_return('URL')
+        obj.should_receive(:sprite_position).with(group, name, x, y).and_return('POSITION')
+        obj.sprite(group, name, x, y).should be_sass('URL POSITION')
+      end
+    end
+
   end
 
 
