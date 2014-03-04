@@ -9,7 +9,7 @@ module SpriteFactory
     def sprite_position(group, image, x=nil, y=nil)
       xoff = compute_offset(group, image, :x, x)
       yoff = compute_offset(group, image, :y, y)
-      ::Sass::Script::String.new "#{xoff} #{yoff}"
+      ::Sass::Script::String.new "-#{xoff} -#{yoff}"
     end
 
     def sprite_width(*args)
