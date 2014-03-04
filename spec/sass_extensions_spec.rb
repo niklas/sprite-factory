@@ -89,6 +89,15 @@ describe SpriteFactory::SassExtensions do
       end
     end
 
+
+    describe '#sprite_url' do
+      it 'is hardcoded to default asset pipeline target' do
+        name = 'my_sprite_abc123.png'
+        runner.stub name_and_hash: name
+        obj.sprite_url( sass_val('common') ).should be_sass("url(/assets/sprites/#{name})")
+      end
+    end
+
   end
 
 

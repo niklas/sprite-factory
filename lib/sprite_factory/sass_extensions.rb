@@ -23,6 +23,11 @@ module SpriteFactory
       ::Sass::Script::String.new sprite_runner(group).output_image_file.to_s
     end
 
+    def sprite_url(group)
+      sprite = sprite_runner(group)
+      ::Sass::Script::String.new "url(/assets/sprites/#{sprite.name_and_hash})"
+    end
+
     # one SprocketsRunner for every group
     # cache runners between different EvaluationContexts
     def self.sprite_runner(group)
