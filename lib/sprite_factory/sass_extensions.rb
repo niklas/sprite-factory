@@ -19,8 +19,8 @@ module SpriteFactory
       sprite_attr(:height, *args)
     end
 
-    def sprite_file(*args)
-      sprite_attr(:filename, *args)
+    def sprite_file(group)
+      ::Sass::Script::String.new sprite_runner(group).output_image_file.to_s
     end
 
     # one SprocketsRunner for every group
