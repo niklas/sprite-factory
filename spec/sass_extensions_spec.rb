@@ -120,7 +120,7 @@ describe SpriteFactory::SassExtensions do
     let(:expected_options) { { nocss: true } }
     let(:config)  { {} }  #
     before :each do
-      described_class.stub sprite_runner_config: config
+      SpriteFactory::SprocketsRunner.stub sprite_runner_config: config
     end
 
     it 'creates and runs a SprocketsRunner for every unknown group' do

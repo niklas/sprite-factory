@@ -7,7 +7,9 @@ module SpriteFactory
     end
 
     def run!
-
+      available_sprites.each do |name|
+        SprocketsRunner.from_config_file(name).run!
+      end
     end
 
     def available_sprites

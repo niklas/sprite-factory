@@ -11,6 +11,7 @@ module SpriteFactory
   autoload :Style,   File.join(LIB, 'sprite_factory/style')   # style generators all live in a single module (for now)
   autoload :Image,   File.join(LIB, 'sprite_factory/image')   # wrap the loaded files
   autoload :SprocketsRunner, File.join(LIB, 'sprite_factory/sprockets_runner')  # coordinates multiple directories sprites through Sprockets (Rails asset pipeline)
+  autoload :RailsCompiler, File.join(LIB, 'sprite_factory/rails_compiler') # for in-request compilation
 
   def self.run!(input, config = {}, &block)
     Runner.new(input, config).run!(&block)

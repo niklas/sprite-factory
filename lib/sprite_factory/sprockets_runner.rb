@@ -3,6 +3,14 @@ module SpriteFactory
   class SprocketsRunner < Runner
     SPRITE_VERSION = 1
 
+    def self.sprite_runner_config
+      @__sprite_runner_config ||= YAML.load_file('config/sprite_factory.yml').symbolize_keys
+    end
+
+    def self.from_config_file(group_name, options={})
+      new( group_name, sprite_runner_config.merge(nocss: true).merge(options) )
+    end
+
     # here, #input is not the path to a directory, but the sprite-group name
     # for which images should be build form all possible directories in the
     # Asset Pipeline

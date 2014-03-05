@@ -39,10 +39,7 @@ module SpriteFactory
       group_name = group.value
       @__sprite_runners ||= {}
       @__sprite_runners[group_name] ||=
-        SpriteFactory::SprocketsRunner.new(
-          group_name,
-          sprite_runner_config.merge(nocss: true)
-      ).tap(&:run!)
+        SpriteFactory::SprocketsRunner.from_config_file(group_name).tap(&:run!)
     end
 
     def self.clear_sprite_runner_cache!

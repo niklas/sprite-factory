@@ -7,7 +7,19 @@ describe SpriteFactory::RailsCompiler do
   let(:root) { double 'root' }
 
   describe '#run!' do
-    it 'compiles the available_sprites'
+    let(:zwoelf_runner) { double 'SprocketsRunner', run!: true }
+    let(:droelf_runner) { double 'SprocketsRunner', run!: true }
+    it 'compiles the available_sprites' do
+      subject.stub available_sprites: %w(zwoelf droelf)
+
+      SpriteFactory::SprocketsRunner.should_receive(:from_config_file).with('zwoelf').and_return(zwoelf_runner)
+      SpriteFactory::SprocketsRunner.should_receive(:from_config_file).with('droelf').and_return(droelf_runner)
+
+      zwoelf_runner.should_receive(:run!)
+      droelf_runner.should_receive(:run!)
+
+      subject.run!
+    end
   end
 
   describe '#available_sprites' do
