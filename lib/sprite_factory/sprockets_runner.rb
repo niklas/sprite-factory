@@ -25,9 +25,9 @@ module SpriteFactory
     end
 
     def run!
-      @images = load_images
-      max    = layout_images(@images)
       if generation_required?
+        @images = load_images
+        max    = layout_images(@images)
         create_sprite(@images, max[:width], max[:height])
       end
     end
@@ -71,7 +71,7 @@ module SpriteFactory
     def outdated?
       if File.exists?(output_image_file)
         mtime = File.mtime(output_image_file)
-        return images.any? {|image| File.mtime(image.filename) > mtime }
+        return image_files.any? {|image| File.mtime(image) > mtime }
       end
       true
     end

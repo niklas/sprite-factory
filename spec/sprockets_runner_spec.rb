@@ -123,9 +123,9 @@ describe SpriteFactory::SprocketsRunner do
     end
 
     describe '#generation_required?' do
-      let(:images) { [] }
+      let(:image_files) { [] }
       before :each do
-        subject.stub images: images
+        subject.stub image_files: image_files
       end
       it 'is true when file does not exist' do
         subject.config[:output_image] = '/whereever/whores/go'
@@ -136,7 +136,7 @@ describe SpriteFactory::SprocketsRunner do
           output      = root.mkfile('common.png')
           sleep 0.1
           icon        = root.mkfile('images/sprites/common/icon.png')
-          images << double('Image', filename: icon)
+          image_files << icon
           subject.config[:output_image] = output
           subject.should be_generation_required
         end
@@ -147,7 +147,7 @@ describe SpriteFactory::SprocketsRunner do
           icon        = root.mkfile('images/sprites/common/icon.png')
           sleep 0.1
           output      = root.mkfile('common.png')
-          images << double('Image', filename: icon)
+          image_files << icon
           subject.config[:output_image] = output
           subject.should_not be_generation_required
         end
