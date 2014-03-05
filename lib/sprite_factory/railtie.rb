@@ -12,7 +12,7 @@ module SpriteFactory
 
     initializer 'sprite_factory.setup_sprite_compilation' do |app|
       if app.config.assets.compile
-        ApplicationController.class_eval do
+        ActionController::Base.class_eval do
           include ControllerMethods
           before_action :compile_sprites
         end
