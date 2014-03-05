@@ -50,18 +50,24 @@ describe SpriteFactory::SassExtensions do
       # must be nagative because of the way sprite are shifted
       it 'returns sprite offset' do
         icon.stub x: 0, y: 5
-        sprite_position("common", "icon").should be_sass('-0px -5px')
+        sprite_position("common", "icon").should be_sass('0px -5px')
       end
 
       it 'returns another sprite offset' do
-        logo.stub x: 0, y: 65
-        sprite_position("common", "logo").should be_sass('-0px -65px')
+        logo.stub x: 5, y: 65
+        sprite_position("common", "logo").should be_sass('-5px -65px')
       end
 
       it 'takes additional offset' do
         logo.stub x: 0, y: 65
         sprite_position("common", "logo", 3, 5).
-          should be_sass('-3px -70px')
+          should be_sass('3px -60px')
+      end
+
+      it 'takes negative offset' do
+        logo.stub x: 0, y: 65
+        sprite_position("common", "logo", 3, -5).
+          should be_sass('3px -70px')
       end
     end
 

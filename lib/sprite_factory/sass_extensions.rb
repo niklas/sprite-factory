@@ -7,9 +7,9 @@ module SpriteFactory
   # Strongly inspired by railsjedi/sprite
   module SassExtensions
     def sprite_position(group, image, x=nil, y=nil)
-      xoff = compute_offset(group, image, :x, x)
-      yoff = compute_offset(group, image, :y, y)
-      ::Sass::Script::String.new "-#{xoff} -#{yoff}"
+      xoff = cast_ruby_to_sass compute_offset(group, image, :x, x)
+      yoff = cast_ruby_to_sass compute_offset(group, image, :y, y)
+      ::Sass::Script::String.new "#{xoff} #{yoff}"
     end
 
     def sprite_width(*args)
@@ -56,26 +56,33 @@ module SpriteFactory
       if offset
         val = offset.value
         if val.is_a? Fixnum
-          (sprite_attr(axis, group, image).to_i + val).to_s + 'px'
+          - ( pure_sprite_attr(axis, group, image) - val )
         else
-          val
+          "-#{val}"
         end
       else
-        sprite_attr(axis, group, image)
+        - pure_sprite_attr(axis, group, image)
       end
     end
 
     def sprite_attr(attr, group, image)
+      cast_ruby_to_sass pure_sprite_attr(attr, group, image)
+    end
+
+    def cast_ruby_to_sass(val)
+      if val.is_a?(Numeric)
+        ::Sass::Script::Number.new val, %w(px)
+      else
+        ::Sass::Script::String.new val
+      end
+    end
+
+    def pure_sprite_attr(attr, group, image)
       sprite = sprite_data(group, image)
       if sprite
-        val = sprite.public_send(attr)
-        if val.is_a?(Numeric)
-          ::Sass::Script::Number.new val, %w(px)
-        else
-          ::Sass::Script::String.new val
-        end
+        sprite.public_send(attr)
       else
-        ""
+        raise ArgumentError, "sprite '#{image}' not found"
       end
     end
 
