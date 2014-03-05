@@ -21,7 +21,9 @@ module SpriteFactory
 
     module ControllerMethods
       def compile_sprites
-        SpriteFactory::RailsCompiler.new( Rails.root ).run!
+        benchmark 'compiling sprites' do
+          SpriteFactory::RailsCompiler.new( Rails.root ).run!
+        end
         true
       end
     end
