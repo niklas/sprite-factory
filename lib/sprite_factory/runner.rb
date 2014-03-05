@@ -185,6 +185,7 @@ module SpriteFactory
     #----------------------------------------------------------------------------
 
     def create_sprite(images, width, height)
+      FileUtils.mkdir_p File.dirname(output_image_file)
       library.create(output_image_file, images, width, height)
       pngcrush(output_image_file)
     end
