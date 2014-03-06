@@ -78,13 +78,14 @@ module SpriteFactory
       if sprite
         sprite.public_send(attr)
       else
-        raise ArgumentError, "sprite '#{image}' not found"
+        raise ArgumentError, "could not find '#{image}' in sprite '#{group}'"
       end
     end
 
     def sprite_data(group, image)
+      image = image.value if image.respond_to?(:value)
       sprite_runner(group).images.find do |generated|
-        generated.name_without_pseudo_class == image.value
+        generated.name_without_pseudo_class == image
       end
     end
 
