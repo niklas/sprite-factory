@@ -59,6 +59,13 @@ module SpriteFactory
       Digest::MD5.file(filename).hexdigest
     end
 
+    def marshal_dump
+      [@filename, @width, @height, @name, @ext, @x, @y, @cssw, @cssh, @cssx, @cssy, @w, @h]
+    end
+
+    def marshal_load(data)
+      @filename, @width, @height, @name, @ext, @x, @y, @cssw, @cssh, @cssx, @cssy, @w, @h = data
+    end
 
   end
 end

@@ -105,8 +105,11 @@ describe SpriteFactory::SprocketsRunner do
     describe '#run!' do
       before :each do
         subject.stub image_files: SpriteFactory.find_files(File.join('test/images/regular', '*.png'))
+        subject.stub load_from_cache: true, save_to_cache: true
       end
       it 'builds the sprite' do
+        subject.should_not_receive(:load_from_cache)
+        subject.should_receive(:save_to_cache)
         temp_filesystem do |root|
           output = root.join('common.png')
           subject.config[:output_image] = output
@@ -133,7 +136,45 @@ describe SpriteFactory::SprocketsRunner do
           output = root.join('common.png')
           subject.config[:output_image] = output
           subject.stub :generation_required? => false
+          subject.should_receive(:load_from_cache)
+          subject.should_not_receive(:save_to_cache)
           expect { subject.run! }.to_not change { File.exist?(output) }
+        end
+      end
+
+    end
+
+    describe 'compilation cache' do
+      let(:tmp)  { Tempfile.new('xxx.yml') }
+      let(:path) { tmp.path }
+      let(:images) { SpriteFactory::Library::MiniMagick.load image_names }
+      let(:image_names) { 5.times.map { "test/images/custom/running.png" } }
+
+      before :each do
+        subject.config[:cache_file_path] = path
+        subject.instance_variable_set '@images', images
+      end
+
+      describe '#save_to_cache' do
+        it 'saves the images in a file for later retrieval' do
+          subject.save_to_cache
+
+          data = File.read(path)
+          data.should_not be_empty
+          loaded = Marshal.load(data)
+          loaded[:images].size.should == 5
+        end
+      end
+
+      describe '#load_from_cache' do
+        it 'loads the saved images from file if possible' do
+          subject.save_to_cache
+
+          subject.instance_variable_set '@images', []
+          subject.images.should be_empty
+
+          subject.load_from_cache
+          subject.images.size.should == 5
         end
       end
     end

@@ -72,5 +72,28 @@ describe SpriteFactory::Image do
     end
   end
 
+  describe 'marshalling' do
+    let(:dumped) { Marshal.dump( image ) }
+    let(:loaded) { Marshal.load( dumped ) }
+
+    %w(
+      filename
+      width
+      height
+      name
+      ext
+      x y
+      cssw cssh
+      cssx cssy
+      w h
+    ).each do |meth|
+      it "saves and restores ##{meth}" do
+        setter = "#{meth}="
+        image.public_send(setter, 23) if image.respond_to?(setter)
+        loaded.public_send(meth).should == image.public_send(meth)
+      end
+    end
+  end
+
 
 end

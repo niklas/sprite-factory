@@ -3,6 +3,8 @@ module SpriteFactory
   class SprocketsRunner < Runner
     SPRITE_VERSION = 1
 
+    class UnreadableCache < StandardError; end
+
     def self.from_config_file(group_name, options={})
       path = options.fetch(:config_file) { Rails.root.join('config/sprite_factory.yml') }
       config = YAML.load_file(path)
@@ -24,7 +26,12 @@ module SpriteFactory
         @images = load_images
         max    = layout_images(@images)
         create_sprite(@images, max[:width], max[:height])
+        save_to_cache
+      else
+        load_from_cache
       end
+    rescue UnreadableCache => e
+      retry
     end
 
     def output_image_file
@@ -70,6 +77,35 @@ module SpriteFactory
       end
       true
     end
+
+
+    # Once the sprites are compiled, we may still need the layout data and filenames in other processes.
+    def cache_file_path
+      @config.fetch(:cache_file_path) { Rails.root.join('tmp/cache/sprites').join(@input + '.dump') }
+    end
+
+    def save_to_cache
+      FileUtils.mkdir_p File.dirname(cache_file_path)
+      FileUtils.rm_f cache_file_path
+      data = {
+        images: images
+      }
+      File.open(cache_file_path, 'w') do |cache|
+        Marshal.dump(data, cache)
+      end
+    end
+
+    def load_from_cache
+      if File.exists?(cache_file_path)
+        Marshal.load(File.read(cache_file_path)).tap do |hash|
+          @images = hash[:images]
+        end
+      end
+    rescue ArgumentError => e
+      FileUtils.rm_f cache_file_path
+      raise UnreadableCache, e.inspect
+    end
+
 
   protected
     def source_directories
