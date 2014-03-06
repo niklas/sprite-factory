@@ -5,6 +5,22 @@ describe SpriteFactory::SprocketsRunner do
     described_class.should < SpriteFactory::Runner
   end
 
+  describe '.from_config_file' do
+    let(:path) { 'here/app/config/sprite_factory.yml' }
+    it 'loads configuration from given config_file' do
+      loaded = { "foo" => 23 }
+      usable = { foo: 23 }   # we use symbols all over the lib
+      loaded.stub symbolize_keys: usable
+      YAML.should_receive(:load_file).
+        with(path).
+        and_return(loaded)
+
+      r = described_class.from_config_file 'lol', config_file: path, bar: 42
+      r.config[:foo].should == 23
+      r.config[:bar].should == 42 # still uses given configs
+    end
+  end
+
   describe 'given a group name as input' do
     let(:group) { 'common' }
     let(:source_directories) { [] }

@@ -39,15 +39,11 @@ module SpriteFactory
       group_name = group.value
       @__sprite_runners ||= {}
       @__sprite_runners[group_name] ||=
-        SpriteFactory::SprocketsRunner.from_config_file(group_name).tap(&:run!)
+        SpriteFactory::SprocketsRunner.from_config_file(group_name, nocss: true).tap(&:run!)
     end
 
     def self.clear_sprite_runner_cache!
       @__sprite_runners = {}
-    end
-
-    def self.sprite_runner_config
-      @__sprite_runner_config ||= YAML.load_file('config/sprite_factory.yml').symbolize_keys
     end
 
   protected

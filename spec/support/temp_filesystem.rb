@@ -20,10 +20,14 @@ module TempFilesystemHelper
       full
     end
 
-    def mkfile(path)
+    def mkfile(path, content='')
       full = join path
       mkdir File.dirname(path)
-      FileUtils.touch full
+      if content.nil? || content.empty?
+        FileUtils.touch full
+      else
+        File.open(full, 'w') { |f| f.write content }
+      end
       full
     end
 
