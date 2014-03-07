@@ -181,31 +181,48 @@ describe SpriteFactory::SprocketsRunner do
 
     describe '#generation_required?' do
       let(:image_files) { [] }
+      let(:somewhere) { __FILE__ }
+      let(:nowhere) { '/whereever/whores/go' }
       before :each do
         subject.stub image_files: image_files
+        subject.config[:cache_file_path] = nowhere
       end
-      it 'is true when file does not exist' do
-        subject.config[:output_image] = '/whereever/whores/go'
+      it 'is true when sprite file does not exist' do
+        subject.config[:output_image] = nowhere
         subject.should be_generation_required
       end
-      it 'is true when file is outdated' do
+      it 'is true when sprite file is outdated' do
         temp_filesystem do |root|
-          output      = root.mkfile('common.png')
+          subject.config[:output_image]    = root.mkfile('common.png')
           sleep 0.1
           icon        = root.mkfile('images/sprites/common/icon.png')
           image_files << icon
-          subject.config[:output_image] = output
           subject.should be_generation_required
         end
       end
-      it 'is false when file exists and is uptodate' do
+      it 'is true when sprite file is uptodate, but cache file does not exist' do
         # same as above, but output made AFTER icon
         temp_filesystem do |root|
           icon        = root.mkfile('images/sprites/common/icon.png')
           sleep 0.1
-          output      = root.mkfile('common.png')
+          subject.config[:output_image]    = root.mkfile('common.png')
           image_files << icon
-          subject.config[:output_image] = output
+          subject.should be_generation_required
+        end
+      end
+
+      it 'is true when sprite file exists, but cache file does not exist' do
+        subject.config[:output_image] = somewhere
+        subject.config[:cache_file_path] = nowhere
+        subject.should be_generation_required
+      end
+      it 'is false when sprite file AND cache file exist and are uptodate' do
+        temp_filesystem do |root|
+          icon        = root.mkfile('images/sprites/common/icon.png')
+          sleep 0.1
+          subject.config[:output_image]    = root.mkfile('common.png')
+          subject.config[:cache_file_path] = root.mkfile('cache.dump')
+          image_files << icon
           subject.should_not be_generation_required
         end
       end

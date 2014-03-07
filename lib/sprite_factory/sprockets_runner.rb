@@ -67,15 +67,17 @@ module SpriteFactory
     end
 
     def generation_required?
-      !File.exists?(output_image_file) || outdated?
+      !File.exists?(output_image_file) || !File.exists?(cache_file_path) || outdated?
     end
 
     def outdated?
-      if File.exists?(output_image_file)
-        mtime = File.mtime(output_image_file)
-        return image_files.any? {|image| File.mtime(image) > mtime }
+      [output_image_file, cache_file_path].any? do |outfile|
+        if File.exists?(outfile)
+          mtime = File.mtime(outfile)
+          return image_files.any? {|image| File.mtime(image) > mtime }
+        end
+        true
       end
-      true
     end
 
 
