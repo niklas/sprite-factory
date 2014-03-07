@@ -22,6 +22,7 @@ module SpriteFactory
     module ControllerMethods
       def compile_sprites
         benchmark 'compiling sprites' do
+          SpriteFactory::SassExtensions.clear_sprite_runner_cache!
           SpriteFactory::RailsCompiler.new( Rails.root ).run!
         end
         true
