@@ -51,7 +51,7 @@ module SpriteFactory
     def compute_offset(group, image, axis, offset)
       if offset
         val = offset.value
-        if val.is_a? Fixnum
+        if val.is_a? Integer
           - ( pure_sprite_attr(axis, group, image) - val )
         else
           "-#{val}"
